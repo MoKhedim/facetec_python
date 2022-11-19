@@ -37,7 +37,6 @@ def downloadStorageImage(company_name: str, user_id):
     r = requests.get(url, allow_redirects=True)
     open(f"known/{file_name}", 'wb').write(r.content)
 
-getUsers("company1")
 
 """
 cred = credentials.Certificate("./codejam-bbc52-52bf4477aac5.json")

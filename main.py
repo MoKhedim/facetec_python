@@ -5,22 +5,27 @@ from pathlib import Path
 import threading
 import time
 import datetime
+from connection_database import getUsers
 
 
-known = False
+
 cap = cv2.VideoCapture(0)
 
-momo_img = face_recognition.load_image_file("/home/momo/Documents/Hackathon/facetec_python/imgTest/KnowMohammedKhedim.jpg")
-momo_img_encoding = face_recognition.face_encodings(momo_img)[0]
+known_face_encodings = []
 
 
-known_face_encodings = [
-    momo_img_encoding
-]
+known_face_names = []
 
-known_face_names = [
-    "Mohammed Khedim"
-]
+users = getUsers("company1")
+
+for user in users.each():
+    id = user.key()
+    name = user.val()['name']
+    img = face_recognition.load_image_file(f"/home/momo/Documents/Hackathon/facetec_python/known/{id}.jpg")
+    img_encoding = face_recognition.face_encodings(img)[0]
+    known_face_encodings.append(img_encoding)
+    known_face_names.append(name)
+
 
 
 face_locations = []
@@ -29,6 +34,7 @@ face_names = []
 process_this_frame = True
 
 while True:
+    known = False
     ret, frame = cap.read()
     if ret == True:
 
@@ -54,13 +60,13 @@ while True:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
             name = "Unknown"
-
+            known
             # # If a match was found in known_face_encodings, just use the first one.
             if True in matches:
                 first_match_index = matches.index(True)
                 name = known_face_names[first_match_index]
-                known = True
                 print( name + "is allowed in!")
+                known = True
 
             # Or instead, use the known face with the smallest distance to the new face
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
@@ -78,11 +84,13 @@ while True:
         bottom *= 4
         left *= 4
 
+        color = (0, 255, 0) if known else (0, 0, 255)
         # Draw a box around the face
-        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+        cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
 
         # Draw a label with a name below the face
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+
+        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), color, cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.4, (255, 255, 255), 1)
 

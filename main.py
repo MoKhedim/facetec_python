@@ -21,7 +21,7 @@ password = input("Inpout your password")
 
 
 
-users = getUsers("company1")
+users = getUsers(username)
 
 for user in users.each():
     id = user.key()

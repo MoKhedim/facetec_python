@@ -16,6 +16,11 @@ known_face_encodings = []
 
 known_face_names = []
 
+username = input("Input your email adress")
+password = input("Inpout your password")
+
+
+
 users = getUsers("company1")
 
 for user in users.each():
@@ -65,9 +70,11 @@ while True:
             if True in matches:
                 first_match_index = matches.index(True)
                 name = known_face_names[first_match_index]
-                print( name + "is allowed in!")
                 known = True
-
+                color = (0, 255, 0) if known else (0, 0, 255)
+            else:
+                known = False
+                color = (0, 255, 0) if known else (0, 0, 255)
             # Or instead, use the known face with the smallest distance to the new face
             face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
             best_match_index = np.argmin(face_distances)
@@ -84,7 +91,7 @@ while True:
         bottom *= 4
         left *= 4
 
-        color = (0, 255, 0) if known else (0, 0, 255)
+        
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
 
